@@ -162,6 +162,7 @@ async function run() {
 
   app.post('/coupon-add', verifyToken, async(req, res) => {
        const {couponData} = req.body;
+       console.log(couponData)
        const result = await couponsCollection.insertOne(couponData);
        res.send(result);  
   })
