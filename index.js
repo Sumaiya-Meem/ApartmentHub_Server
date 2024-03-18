@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
-// const stripe = require("stripe")(process.env.SPRITE_SECRET_KEY);
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 app.use(express.json());
 app.use(cors());
@@ -69,8 +69,6 @@ async function run() {
 
 
 
-  // user collection here;
-  //  public api 
 
   app.post('/user', async(req, res) => {
       const userInfo = req.body;
@@ -83,14 +81,13 @@ async function run() {
       res.send(result);
   })
 
-// public api
+
    app.get('/apartment', async(req, res) => {
         const page =  parseInt(req.query.page);
         const size =  parseInt(req.query.size);
         const result = await apartmentCollection.find().skip(page * size).limit(size).toArray();
         res.send(result);
    })
-// public api
 
    app.get('/apartment-count', async(req, res) => {
         const result = await apartmentCollection.estimatedDocumentCount();
@@ -158,7 +155,7 @@ async function run() {
           res.send(result);
    })
 
-  //  coupon adding
+
 
   app.post('/coupon-add', verifyToken, async(req, res) => {
        const {couponData} = req.body;
@@ -172,7 +169,7 @@ async function run() {
         res.send(result)
   })
 
-  //public api
+ 
 
   app.get('/coupons-available', async(req, res) => {
        const query = {available: 'yes'};
