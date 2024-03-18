@@ -153,6 +153,7 @@ async function run() {
    app.get('/member-data/:email',verifyToken, async(req, res) => {
           const email = req.params.email;
           const query = {userEmail: email};
+          console.log(query);
           const result = await agreementAcceptCollection.find(query).toArray();
           res.send(result);
    })
@@ -191,17 +192,17 @@ async function run() {
 
   //  stripe function 
 
-//   app.post('/create-payment-intent', verifyToken, async( req, res) => {
-//        let {price} = req.body;
-//        if(price == 0){
-//             price = 2
-//          }
-//        const amount = parseInt(price * 100);
-//        const paymentIntent = await stripe.paymentIntents.create({
-//         amount: amount,
-//         currency: "usd",
-//         payment_method_types: ['card'],
-//   });
+  app.post('/create-payment-intent', verifyToken, async( req, res) => {
+       let {price} = req.body;
+       if(price == 0){
+            price = 2
+         }
+       const amount = parseInt(price * 100);
+       const paymentIntent = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: "usd",
+        payment_method_types: ['card'],
+  });
 
      res.send({
           clientSecret: paymentIntent.client_secret
