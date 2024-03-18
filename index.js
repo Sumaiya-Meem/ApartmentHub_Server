@@ -214,6 +214,7 @@ async function run() {
 
   app.post('/payment', verifyToken, async(req, res) => {
         const paymentInfo = req.body;
+        console.log(paymentInfo);
         const result = await paymentCollection.insertOne(paymentInfo);
         res.send(result)
   });
