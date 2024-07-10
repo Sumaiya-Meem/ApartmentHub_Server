@@ -128,23 +128,7 @@ app.delete('/apartment/:id',async(req, res) => {
   res.send(result);
 
 })
-// app.put('/apartment/:id',async(req, res) => {
-//   const id = req.params.id;
-//   const query = {_id: new ObjectId(id)};
-//   const options ={upsert:true};
-//   const updatedApartment = req.body;
-//   const apartment ={
-//     $set:{
-//       floorNo: updatedApartment.floorNo,
-//       blockName: updatedApartment.blockName,
-//       apartmentNo: updatedApartment.apartmentNo,
-//       rent: updatedApartment.rent,
-//     }
-//   }
-//   const result = await apartmentCollection.updateOne(query, apartment,options);
-//   res.send(result);
 
-// })
 app.put('/apartment/:id', async (req, res) => {
   const id = req.params.id;
   const query = { _id: new ObjectId(id) };
@@ -156,17 +140,12 @@ app.put('/apartment/:id', async (req, res) => {
       blockName: updatedApartment.blockName,
       apartmentNo: updatedApartment.apartmentNo,
       rent: updatedApartment.rent,
-      apartmentImage: updatedApartment.apartmentImage, // Include apartmentImage if available
+      apartmentImage: updatedApartment.apartmentImage, 
     }
   };
 
-  try {
     const result = await apartmentCollection.updateOne(query, apartment, options);
     res.send(result);
-  } catch (error) {
-    console.error("Error updating apartment:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
 });
 
 
