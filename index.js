@@ -82,17 +82,94 @@ async function run() {
   })
 
 
-   app.get('/apartment', async(req, res) => {
+app.get('/apartment', async(req, res) => {
         const page =  parseInt(req.query.page);
         const size =  parseInt(req.query.size);
         const result = await apartmentCollection.find().skip(page * size).limit(size).toArray();
         res.send(result);
-   })
+})
+app.get('/apartment/:id', async(req, res) => {
+     const id = req.params.id;
+     const query = {_id: new ObjectId(id)};
+     const result = await apartmentCollection.findOne(query);
+     res.send(result);
+})
 
    app.get('/apartment-count', async(req, res) => {
         const result = await apartmentCollection.estimatedDocumentCount();
         res.send({result});
    })
+
+   
+   app.get('/agreementAccept', async(req, res) => {
+
+     const result = await agreementAcceptCollection.find().toArray();
+     res.send(result);
+})
+app.post('/apartment',async(req, res) => {
+  const apartmentData = req.body;
+  const result = await apartmentCollection.insertOne(apartmentData);
+  res.send(result);
+
+})
+
+app.get('/apartment/:id',async(req, res) => {
+  const id = req.params.id;
+  const query = {_id: new ObjectId(id)};
+  const result = await apartmentCollection.findOne(query);
+  res.send(result);
+
+})
+
+app.delete('/apartment/:id',async(req, res) => {
+  const id = req.params.id;
+  const query = {_id: new ObjectId(id)};
+  const result = await apartmentCollection.deleteOne(query);
+  res.send(result);
+
+})
+// app.put('/apartment/:id',async(req, res) => {
+//   const id = req.params.id;
+//   const query = {_id: new ObjectId(id)};
+//   const options ={upsert:true};
+//   const updatedApartment = req.body;
+//   const apartment ={
+//     $set:{
+//       floorNo: updatedApartment.floorNo,
+//       blockName: updatedApartment.blockName,
+//       apartmentNo: updatedApartment.apartmentNo,
+//       rent: updatedApartment.rent,
+//     }
+//   }
+//   const result = await apartmentCollection.updateOne(query, apartment,options);
+//   res.send(result);
+
+// })
+app.put('/apartment/:id', async (req, res) => {
+  const id = req.params.id;
+  const query = { _id: new ObjectId(id) };
+  const options = { upsert: true };
+  const updatedApartment = req.body;
+  const apartment = {
+    $set: {
+      floorNo: updatedApartment.floorNo,
+      blockName: updatedApartment.blockName,
+      apartmentNo: updatedApartment.apartmentNo,
+      rent: updatedApartment.rent,
+      apartmentImage: updatedApartment.apartmentImage, // Include apartmentImage if available
+    }
+  };
+
+  try {
+    const result = await apartmentCollection.updateOne(query, apartment, options);
+    res.send(result);
+  } catch (error) {
+    console.error("Error updating apartment:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 
    app.post('/apartment',verifyToken, async(req, res) => {
        const apartmentData = req.body;
@@ -154,6 +231,13 @@ async function run() {
           const result = await agreementAcceptCollection.find(query).toArray();
           res.send(result);
    })
+
+   app.get('/member-data', verifyToken, async(req, res) => {
+     
+         const result = await agreementAcceptCollection.find({}).toArray();
+         res.send(result);
+ });
+ 
 
 
 
@@ -225,6 +309,31 @@ async function run() {
       res.send(result)
   })
 
+  app.get('/rent-apartment', verifyToken, async (req, res) => {
+     const { floorNo, apartmentNo } = req.query;
+ 
+     const query = { floorNo: parseInt(floorNo), apartmentNo: parseInt(apartmentNo) };
+ 
+     console.log("Query parameters:", query);
+ 
+     try {
+         const payment = await agreementAcceptCollection.findOne(query);
+ 
+         console.log("Payment document found:", payment);
+ 
+         if (payment) {
+             res.send({ isPaid: true });
+         } else {
+             res.send({ isPaid: false });
+         }
+     } catch (error) {
+         console.error("Error finding payment document:", error);
+         res.status(500).send({ error: "Internal Server Error" });
+     }
+ });
+ 
+ 
+ 
 
   app.get('/all-member', verifyToken, async(req, res) => {
        const query = {role: 'member'};
@@ -256,7 +365,7 @@ async function run() {
   })
 
 
-  // admin profile data
+  //find  admin profile data
 
   app.get('/admin-profile-data', verifyToken, async(req, res) => {
       
@@ -269,7 +378,7 @@ async function run() {
   })
 
     
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+//     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
