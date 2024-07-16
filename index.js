@@ -150,12 +150,21 @@ app.put('/apartment/:id', async (req, res) => {
 
 
 
-   app.post('/apartment',verifyToken, async(req, res) => {
-       const apartmentData = req.body;
-       const result = await cartApartmentCollection.insertOne(apartmentData);
-       res.send(result);
+  //  app.post('/apartment',verifyToken, async(req, res) => {
+  //      const apartmentData = req.body;
+  //      const result = await cartApartmentCollection.insertOne(apartmentData);
+  //      res.send(result);
 
-   })
+  //  })
+
+   app.post('/cart-apartment',async(req, res) => {
+    const apartmentData = req.body;
+    const result = await cartApartmentCollection.insertOne(apartmentData);
+    res.send(result);
+
+})
+
+
 
    app.get('/cart-apartment', verifyToken, async(req, res) => {
 
